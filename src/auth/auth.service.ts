@@ -6,6 +6,7 @@ import {
   Logger,
   ConflictException,
   InternalServerErrorException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { UserService } from './../user/user.service';
 import { JwtService } from '@nestjs/jwt';
@@ -25,10 +26,28 @@ export class AuthService {
   ) {}
 
   async login(user: any) {
-    const payload = { username: user.username, sub: user.userId };
-    return {
-      accessToken: this.jwtService.sign(payload),
-    };
+    // const payload = { username: user.username, sub: user.userId };
+
+    const passwordMatchRes = await this.usersService.passwordMatch(user);
+    const userData = passwordMatchRes.userData;
+    let response: ResponseApi<{ accessToken: string }>;
+    let payload = {};
+    try {
+      if (passwordMatchRes.passwordMatch) {
+        payload = {
+          username: userData.id,
+          sub: userData.id,
+          name: `${userData.name} ${userData.lastname}`,
+        };
+      }
+    } catch (error) {
+      throw new ForbiddenException(error.message);
+    }
+    return (response = {
+      data: { accessToken: this.jwtService.sign(payload) },
+      message: 'login successful',
+      statusCode: 200,
+    });
   }
 
   async signUp(user: User): Promise<ResponseApi<User>> {
@@ -69,8 +88,8 @@ export class AuthService {
         );
       }
     } catch (error) {
-      Logger.warn(error.response.message);
-      return error.response;
+      Logger.warn(error.getResponse().message);
+      return error.getResponse();
     }
     Logger.log(response.message);
     return response;
@@ -94,8 +113,8 @@ export class AuthService {
         };
       }
     } catch (error) {
-      Logger.warn(error.response.message);
-      return error.response;
+      Logger.warn(error.getResponse().message);
+      return error.getResponse();
     }
     Logger.log(response.message);
     return response;

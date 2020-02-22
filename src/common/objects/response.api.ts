@@ -1,4 +1,3 @@
-
 export class ResponseApi<T> {
   data: T;
   statusCode?: number;
