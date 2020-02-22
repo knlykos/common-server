@@ -34,10 +34,10 @@ export class UserService {
           throw new DataErrorException(`the account it's inactive`);
         } else {
           passwordMatch = await compare(user.password, userResultSet.password);
-          if (passwordMatch === false) {
-            return { passwordMatch: passwordMatch, userData: {} };
-          } else {
+          if (passwordMatch) {
             return { passwordMatch: passwordMatch, userData: userResultSet };
+          } else {
+            throw new DataErrorException(`the password it's incorrect`);
           }
         }
       }

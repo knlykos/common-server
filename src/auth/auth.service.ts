@@ -27,27 +27,31 @@ export class AuthService {
 
   async login(user: any) {
     // const payload = { username: user.username, sub: user.userId };
-
-    const passwordMatchRes = await this.usersService.passwordMatch(user);
-    const userData = passwordMatchRes.userData;
     let response: ResponseApi<{ accessToken: string }>;
     let payload = {};
     try {
+      const passwordMatchRes = await this.usersService.passwordMatch(user);
+      const userData = passwordMatchRes.userData;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
       if (passwordMatchRes.passwordMatch) {
         payload = {
           username: userData.id,
           sub: userData.id,
           name: `${userData.name} ${userData.lastname}`,
         };
+        response = {
+          data: { accessToken: this.jwtService.sign(payload) },
+          message: 'login successful',
+          statusCode: 200,
+        };
+        return response;
+      } else {
       }
     } catch (error) {
       throw new ForbiddenException(error.message);
     }
-    return (response = {
-      data: { accessToken: this.jwtService.sign(payload) },
-      message: 'login successful',
-      statusCode: 200,
-    });
+    // eslint-disable-next-line prefer-const
   }
 
   async signUp(user: User): Promise<ResponseApi<User>> {
