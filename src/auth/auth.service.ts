@@ -3,6 +3,9 @@ import {
   HttpException,
   HttpStatus,
   UnauthorizedException,
+  Logger,
+  ConflictException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { UserService } from './../user/user.service';
 import { JwtService } from '@nestjs/jwt';
@@ -21,15 +24,6 @@ export class AuthService {
     private readonly mailerService: MailerService,
   ) {}
 
-  async validateUser(username: string, pass: string): Promise<any> {
-    // const user = await this.usersService.findOne(username);
-    // if (user && user.password === pass) {
-    //   const { password, ...result } = user;
-    //   return result;
-    // }
-    return null;
-  }
-
   async login(user: any) {
     const payload = { username: user.username, sub: user.userId };
     return {
@@ -39,10 +33,10 @@ export class AuthService {
 
   async signUp(user: User): Promise<ResponseApi<User>> {
     let signUpTemplate: SignUpTemplate;
-    let response: ResponseApi<User> = {
+    const response: ResponseApi<User> = {
       data: { activationToken: '' },
       statusCode: 0,
-      message: 'OK',
+      message: 'Signup Successful',
     };
     const randomString = cryptoRandomString({ length: 30 });
     user.activationToken = randomString;
@@ -70,22 +64,15 @@ export class AuthService {
           context: signUpTemplate,
         });
       } catch (error) {
-        console.log(error);
-        response = {
-          data: {},
-          error: 'Sucedio un error inesperado al enviar un email',
-          statusCode: 504,
-        };
+        throw new InternalServerErrorException(
+          'unexpected error has occurred when trying to send email',
+        );
       }
     } catch (error) {
-      response = {
-        data: {},
-        error: error,
-        statusCode: 504,
-      };
-      console.log(response);
+      Logger.warn(error.response.message);
+      return error.response;
     }
-
+    Logger.log(response.message);
     return response;
   }
 
@@ -107,9 +94,10 @@ export class AuthService {
         };
       }
     } catch (error) {
-      console.log(typeof error);
+      Logger.warn(error.response.message);
       return error.response;
     }
+    Logger.log(response.message);
     return response;
   }
 }

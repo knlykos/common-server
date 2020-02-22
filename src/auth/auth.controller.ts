@@ -6,6 +6,13 @@ import { AuthService } from './auth.service';
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
+
+  @Post('login')
+  async login(@Req() req: Request) {
+    const user: User = req.body;
+    return await this.authService.login(user);
+  }
+
   @Post('signup')
   async signUp(@Req() req: Request) {
     const user: User = req.body;
