@@ -1,8 +1,5 @@
 import {
   Injectable,
-  HttpException,
-  HttpStatus,
-  UnauthorizedException,
   Logger,
   ConflictException,
   InternalServerErrorException,
@@ -18,7 +15,6 @@ import { SignUpTemplate } from 'src/models/signup.template.model';
 import { environment } from './../enviroments/environment';
 import { emailConstants } from './../common/constants/email.constants';
 import { DatabaseErrorException } from 'src/common/exceptions/database.error.exception';
-import { AdvancedConsoleLogger } from 'typeorm';
 import { DataErrorException } from 'src/common/exceptions/data.error.exception';
 @Injectable()
 export class AuthService {
@@ -145,5 +141,12 @@ export class AuthService {
     }
     return response;
   }
-  async passwordResetRequest(user: User) {}
+  async passwordResetRequest(user: User) {
+    // let response: ResponseApi<User>;
+    try {
+      await this.usersService.findOneByEmail(user);
+    } catch (error) {
+      Logger.error(error);
+    }
+  }
 }

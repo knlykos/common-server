@@ -108,7 +108,7 @@ export class UserService {
       userResultSet = await this.userRepository.findOne({
         where: { email: user.email },
       });
-      console.log('userResultSet',userResultSet);
+      console.log('userResultSet', userResultSet);
     } catch (error) {
       throw new DatabaseErrorException();
     }
@@ -126,5 +126,37 @@ export class UserService {
         }
       }
     }
+  }
+
+  async findOneByEmail(user: User): Promise<User> {
+    let userResultSet: User;
+    try {
+      userResultSet = await this.userRepository.findOne({
+        email: user.email,
+      });
+    } catch (error) {
+      throw new DatabaseErrorException();
+    }
+    return userResultSet;
+    if (userResultSet === undefined || userResultSet === null) {
+      throw new DataErrorException('the email account not exist');
+    } else {
+      if (userResultSet.isActive === false) {
+        throw new DataErrorException(`the account it's inactive`);
+      } else {
+        // try {
+        //   userResultSet.password = await hash(user.password, 10);
+        //   await this.userRepository.save(userResultSet);
+        // } catch (error) {
+        //   throw new DatabaseErrorException();
+        // }
+      }
+    }
+  }
+
+  passwordResetRequest(user: User, requestToken) {
+    let userResultSet: User;
+    try {
+    } catch (error) {}
   }
 }
