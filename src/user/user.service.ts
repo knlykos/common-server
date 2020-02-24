@@ -8,8 +8,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './../entities/user.entity';
 import { Repository } from 'typeorm';
 import { hash, compare } from 'bcrypt';
-import { UnexpectedErrorException } from 'src/common/exceptions/unexpected.error.exception';
 import { DataErrorException } from 'src/common/exceptions/data.error.exception';
+import { DatabaseErrorException } from 'src/common/exceptions/database.error.exception';
 
 @Injectable()
 export class UserService {
@@ -100,5 +100,31 @@ export class UserService {
       }
     }
     return true;
+  }
+
+  async passwordReset(user: User) {
+    let userResultSet: User;
+    try {
+      userResultSet = await this.userRepository.findOne({
+        where: { email: user.email },
+      });
+      console.log('userResultSet',userResultSet);
+    } catch (error) {
+      throw new DatabaseErrorException();
+    }
+    if (userResultSet === undefined || userResultSet === null) {
+      throw new DataErrorException('the email account not exist');
+    } else {
+      if (userResultSet.isActive === false) {
+        throw new DataErrorException(`the account it's inactive`);
+      } else {
+        try {
+          userResultSet.password = await hash(user.password, 10);
+          await this.userRepository.save(userResultSet);
+        } catch (error) {
+          throw new DatabaseErrorException();
+        }
+      }
+    }
   }
 }

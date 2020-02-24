@@ -23,4 +23,16 @@ export class AuthController {
     const token: string = req.query.token;
     return await this.authService.verification(token);
   }
+
+  @Post('password-reset')
+  async passwordReset(@Req() req: Request) {
+    const user: User = req.body;
+    return await this.authService.passwordReset(user);
+  }
+
+  @Post('password-reset-request')
+  async passwordResetRequest(@Req() req: Request) {
+    const user: User = req.body;
+    return await this.authService.passwordResetRequest(user);
+  }
 }

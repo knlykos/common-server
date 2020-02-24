@@ -23,6 +23,9 @@ export class User {
   @Column({ default: false })
   isActive?: boolean;
 
+  @Column({ default: false })
+  profileImage?: string;
+
   @Column()
   activationToken?: string;
 }

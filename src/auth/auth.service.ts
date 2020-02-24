@@ -16,7 +16,10 @@ import { ResponseApi } from 'src/common/objects/response.api';
 import { MailerService } from '@nest-modules/mailer';
 import { SignUpTemplate } from 'src/models/signup.template.model';
 import { environment } from './../enviroments/environment';
-
+import { emailConstants } from './../common/constants/email.constants';
+import { DatabaseErrorException } from 'src/common/exceptions/database.error.exception';
+import { AdvancedConsoleLogger } from 'typeorm';
+import { DataErrorException } from 'src/common/exceptions/data.error.exception';
 @Injectable()
 export class AuthService {
   constructor(
@@ -81,7 +84,7 @@ export class AuthService {
 
         await this.mailerService.sendMail({
           to: response.data.email,
-          from: 'noreply@nkodex.dev',
+          from: emailConstants.from,
           subject: 'Registro exitoso',
           template: 'signin',
           context: signUpTemplate,
@@ -123,4 +126,24 @@ export class AuthService {
     Logger.log(response.message);
     return response;
   }
+
+  async passwordReset(user: User) {
+    let response: ResponseApi<User>;
+    try {
+      await this.usersService.passwordReset(user);
+      response = {
+        data: {},
+        message: 'password changed with succesful',
+        statusCode: 200,
+      };
+    } catch (error) {
+      if (error instanceof DataErrorException) {
+        throw new ConflictException(error.toString());
+      } else if (error instanceof DatabaseErrorException) {
+        throw new InternalServerErrorException(error.toString());
+      }
+    }
+    return response;
+  }
+  async passwordResetRequest(user: User) {}
 }
