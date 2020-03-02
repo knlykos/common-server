@@ -90,7 +90,7 @@ export class UserService {
       throw new InternalServerErrorException('unexpected error has ocurred');
     }
     if (user.isActive === true) {
-      throw new ConflictException('the token already was used previously');
+      throw new ConflictException('the token was used previously');
     } else {
       try {
         user.isActive = true;
@@ -137,26 +137,16 @@ export class UserService {
     } catch (error) {
       throw new DatabaseErrorException();
     }
-    return userResultSet;
+
     if (userResultSet === undefined || userResultSet === null) {
       throw new DataErrorException('the email account not exist');
     } else {
       if (userResultSet.isActive === false) {
         throw new DataErrorException(`the account it's inactive`);
-      } else {
-        // try {
-        //   userResultSet.password = await hash(user.password, 10);
-        //   await this.userRepository.save(userResultSet);
-        // } catch (error) {
-        //   throw new DatabaseErrorException();
-        // }
       }
     }
+    return userResultSet;
   }
 
-  passwordResetRequest(user: User, requestToken) {
-    let userResultSet: User;
-    try {
-    } catch (error) {}
-  }
+
 }

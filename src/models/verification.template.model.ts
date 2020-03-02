@@ -1,4 +1,4 @@
-export interface SignUpTemplate {
+export interface VerificationTemplate {
   activationURL?: string;
   completeName?: string;
 }
