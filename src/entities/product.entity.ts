@@ -52,4 +52,7 @@ export class Product {
 
   @Column({ nullable: false })
   priceList: number;
+
+  @Column({ nullable: false })
+  supplyTime: number;
 }

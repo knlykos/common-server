@@ -7,6 +7,11 @@ import { User } from './entities/user.entity';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { HandlebarsAdapter, MailerModule } from '@nest-modules/mailer';
+import { Currency } from './entities/currency.entity';
+import { Product } from './entities/product.entity';
+import { Supplies } from './entities/supplies.entity';
+import { Food } from './entities/food.entity';
+import { ProductModule } from './product/product.module';
 
 @Module({
   imports: [
@@ -19,7 +24,7 @@ import { HandlebarsAdapter, MailerModule } from '@nest-modules/mailer';
       port: 5432,
       database: 'bets',
       synchronize: true,
-      entities: [User],
+      entities: [User, Currency, Product, Supplies, Food],
     }),
     MailerModule.forRootAsync({
       useFactory: () => ({
@@ -45,6 +50,7 @@ import { HandlebarsAdapter, MailerModule } from '@nest-modules/mailer';
     }),
     UserModule,
     AuthModule,
+    ProductModule,
   ],
   controllers: [AppController],
   providers: [AppService],

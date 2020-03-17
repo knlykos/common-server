@@ -7,7 +7,7 @@ ingredientes
 identificador, codigo de barras, codigo interno, imagen principal, nombre, descripcion, precio, comentarios, costo, proveedor, tiempo de surtido, existencia, uam, cantidad.
 
 productos
--id, -barcode, -code, -productImage, -name, -description, -details, -price, -costPrice, -comments, -qtyOnHand, -qtyAvailable, -uam, -supplier, -moneda.
+-id, -barcode, -code, -productImage, -name, -description, -details, -price, -costPrice, -comments, -qtyOnHand, -qtyAvailable, -uam, -supplier, -moneda, priceList[], supplyTime;
 
 usuario.
 identificador, email, username, name, lastname, password, isActive, profileImage, activationToken,
@@ -28,3 +28,6 @@ id, productoId,
 
 Monedas - Currency.
 identificador, active, name, position, rate, rounding, decimalPlaces, displayName, currencyUnit, currencyUnitLabel, symbol
+
+Lista de Precios.
+identificador, 
